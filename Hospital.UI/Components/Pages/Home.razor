@@ -1,0 +1,30 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+@inject NavigationManager NavManager
+@inject DialogService DialogService
+
+<RadzenComponents />
+<PageTitle>Home</PageTitle>
+<div class="home_page">
+    <h1>Welcome to our Hospital!</h1>
+    <br />
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+        <RadzenButton Click=@(args => PatientAccount()) Text="Create patient account" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" />
+        <RadzenButton Click=@(args => PatientRecord()) Text="Create patient visit record" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" />
+    </RadzenStack>
+</div>
+    
+@code {
+    
+
+    protected void PatientAccount()
+    {
+        NavManager.NavigateTo("/patient");
+    }
+    protected void PatientRecord()
+    {
+        NavManager.NavigateTo("/record");
+    }
+
+}

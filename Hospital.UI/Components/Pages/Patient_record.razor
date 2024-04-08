@@ -1,0 +1,100 @@
+﻿@page "/record"
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
+@using Hospital.Data.DAO
+@using Hospital.Data.Entities
+@inject DialogService DialogService
+
+<PageTitle>Patient Visit Record</PageTitle>
+
+<h1>Patient Account</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>DOB</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in AllPatients)
+        {
+            <tr>
+                <td>@item.ID</td>
+                <td>@item.Name</td>
+                <td>@item.DOB</td>
+                <td>
+                 <button class="btn btn-primary" @onclick="()=>AddDiagnosis(item)">Add Diagnosis</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (addedDiagnosis != null)
+{
+    <div class="DiagnosisDiv">
+        <h2>Add Diagnosis for @addedDiagnosis.Name</h2>
+        <div>
+            <label>Diagnosis</label>
+            <input type="text" @bind="Diagnosis" />
+        </div>
+        <div>
+            <label>Medicine</label>
+            <input type="text" @bind="Medicine" />
+        </div>
+        <button class="btn btn-primary" @onclick="SaveDiagnosis">Save</button>
+        <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    </div>
+}
+
+@code {
+
+    [Inject]
+    public ApplicationDBContext context { get; set; }
+
+    List<Patient> AllPatients { get; set; } = new List<Patient>();
+    Patient addedDiagnosis { get; set; }
+    string Diagnosis { get; set; }
+    string Medicine { get; set; }
+
+    protected override void OnInitialized()
+    {
+        AllPatients = context.Patients.ToList();
+    }
+
+    private void AddDiagnosis(Patient patient)
+    {
+        addedDiagnosis = patient;
+
+    }
+
+    private void SaveDiagnosis()
+    {
+        var record = new DiagnosisRecord
+            {
+                PatientID = addedDiagnosis.ID,
+                PatientName = addedDiagnosis.Name,
+                Diagnosis = Diagnosis,
+                Medicine = Medicine
+            };
+
+     
+          context.DiagnosisRecords.Add(record);
+          context.SaveChanges();
+
+        Diagnosis = "";
+        Medicine = "";
+
+        NavManager.NavigateTo("/diagnosisList");
+        addedDiagnosis = null;
+        
+    }
+
+    private void CancelEdit()
+    {
+        Diagnosis = "";
+        Medicine = "";
+       addedDiagnosis = null;
+    }
+}

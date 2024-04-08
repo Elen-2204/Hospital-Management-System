@@ -1,0 +1,35 @@
+﻿@page "/diagnosisList"
+@rendermode InteractiveServer
+@using Hospital.Data.Entities
+@using Hospital.Data.DAO
+@inject DialogService DialogService
+@inject NavigationManager NavManager
+
+<h1>Diagnosis Record List</h1>
+
+        <div class="patients">
+        @foreach (var patient in AllRecords)
+        {
+            <div class="bigDiv">
+        <div class="patient">ID:@patient.PatientID</div>
+        <div class="patient">Name:@patient.PatientName</div>
+        <div class="patient">Diagnosis:@patient.Diagnosis</div>
+        <div class="patient">Medicine:@patient.Medicine</div>
+        </div>
+        }
+</div>
+<button class="btn btn-primary" @onclick="GoHome">Go to home</button>
+@code {
+    [Inject]
+    public ApplicationDBContext context { get; set; }
+    List<DiagnosisRecord> AllRecords { get; set; } = new List<DiagnosisRecord>();
+
+    protected override void OnInitialized()
+    {
+        AllRecords = context.DiagnosisRecords.ToList();
+    }
+    protected void GoHome()
+    {
+        NavManager.NavigateTo("/");
+    }
+}
